@@ -1,6 +1,6 @@
 import { transitionIn, transitionOut, getXAttrs } from '../utils'
 
-export function handleForDirective(component, templateEl, expression, initialUpdate, extraVars) {
+export function handleForDirective(component, templateEl, expression, initialUpdate, extraVars, container) {
     warnIfNotTemplateTag(templateEl)
 
     let iteratorNames = parseForExpression(expression)
@@ -8,7 +8,7 @@ export function handleForDirective(component, templateEl, expression, initialUpd
     let items = evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, templateEl, iteratorNames, extraVars)
 
     // As we walk the array, we'll also walk the DOM (updating/creating as we go).
-    let currentEl = templateEl
+    let currentEl = container || templateEl
     items.forEach((item, index) => {
         let iterationScopeVariables = getIterationScopeVariables(iteratorNames, item, index, items, extraVars())
         let currentKey = generateKeyForIteration(component, templateEl, index, iterationScopeVariables)

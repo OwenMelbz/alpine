@@ -387,12 +387,12 @@
     return !isNaN(subject);
   }
 
-  function handleForDirective(component, templateEl, expression, initialUpdate, extraVars) {
+  function handleForDirective(component, templateEl, expression, initialUpdate, extraVars, container) {
     warnIfNotTemplateTag(templateEl);
     let iteratorNames = parseForExpression(expression);
     let items = evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, templateEl, iteratorNames, extraVars); // As we walk the array, we'll also walk the DOM (updating/creating as we go).
 
-    let currentEl = templateEl;
+    let currentEl = container || templateEl;
     items.forEach((item, index) => {
       let iterationScopeVariables = getIterationScopeVariables(iteratorNames, item, index, items, extraVars());
       let currentKey = generateKeyForIteration(component, templateEl, index, iterationScopeVariables);
@@ -1535,7 +1535,9 @@
             break;
 
           case 'for':
-            handleForDirective(this, el, expression, initialUpdate, extraVars);
+            const templateReference = el.getAttribute('x-template');
+            const template = templateReference ? this.$el.querySelector(templateReference) : el;
+            handleForDirective(this, template, expression, initialUpdate, extraVars, templateReference ? el : null);
             break;
 
           case 'cloak':

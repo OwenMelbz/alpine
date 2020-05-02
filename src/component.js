@@ -287,7 +287,13 @@ export default class Component {
                     break;
 
                 case 'for':
-                    handleForDirective(this, el, expression, initialUpdate, extraVars)
+                    const templateReference = el.getAttribute('x-template');
+
+                    const template = templateReference ?
+                        this.$el.querySelector(templateReference) :
+                        el;
+
+                    handleForDirective(this, template, expression, initialUpdate, extraVars, (templateReference ? el : null))
                     break;
 
                 case 'cloak':
